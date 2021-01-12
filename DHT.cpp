@@ -89,13 +89,11 @@ float DHT::readTemperature(bool S, bool force) {  //读取温度
     switch (_type) {
     case DHT11:
       f = data[2];
-      if (data[3] & 0x80) {
-        f = -1 - f;
+      if (data[3] & 0x80) { //低八位的首位表示负数1000 0000表示负数
+        f = -1 - f;         //但dht11实际测量范围不含零下温度
       }
-      f += (data[3] & 0x0f) * 0.1;
-      if (S) {
-        f = convertCtoF(f);
-      }
+      f += (data[3] & 0x0f) * 0.1; //由于精度是± 2℃所以用00001111位运算保留十分位的数值
+      
       break;
     case DHT12:
       f = data[2];
